@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Contact;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
@@ -11,7 +12,7 @@ class ContactController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Contact::class);
+        Gate::authorize('viewAny', Contact::class);
 
         $q = trim((string) $request->query('q', ''));
 
@@ -35,7 +36,7 @@ class ContactController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Contact::class);
+        Gate::authorize('create', Contact::class);
 
         return view('contacts.create');
     }
@@ -52,14 +53,14 @@ class ContactController extends Controller
 
     public function edit(Contact $contact)
     {
-        $this->authorize('update', $contact);
+        Gate::authorize('update', $contact);
 
         return view('contacts.edit', compact('contact'));
     }
 
     public function update(UpdateContactRequest $request, Contact $contact)
     {
-        $this->authorize('update', $contact);
+        Gate::authorize('update', $contact);
 
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
@@ -71,7 +72,7 @@ class ContactController extends Controller
 
     public function destroy(Contact $contact)
     {
-        $this->authorize('delete', $contact);
+        Gate::authorize('delete', $contact);
 
         $contact->delete();
 
@@ -81,7 +82,7 @@ class ContactController extends Controller
     // Opcional: show
     public function show(Contact $contact)
     {
-        $this->authorize('view', $contact);
+        $Gate::authorize('view', $contact);
 
         return view('contacts.show', compact('contact'));
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::post('contacts/quick-store', [ContactController::class, 'quickStore'])->name('contacts.quick-store'); //\App\Http\Controllers\ContactController::class
     Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
     Route::post('/agenda/followups', [AgendaController::class, 'storeFollowup'])->name('agenda.followups.store');
+    Route::get('/reports/commercial', [ReportController::class, 'commercial'])->name('reports.commercial');
 });
 
 require __DIR__.'/auth.php';

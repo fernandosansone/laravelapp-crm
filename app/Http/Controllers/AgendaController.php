@@ -59,11 +59,7 @@ class AgendaController extends Controller
 
     public function storeFollowup(Request $request)
     {
-        Gate::authorize('create', OpportunityFollowup::class); // si definimos policy; si no, usamos permiso abajo
-
-        if (!$request->user()->can('followups.create')) {
-            abort(403);
-        }
+        Gate::authorize('create', [OpportunityFollowup::class, $opp]);
 
         $data = $request->validate([
             'opportunity_id' => ['required','integer','exists:opportunities,id'],
@@ -74,18 +70,6 @@ class AgendaController extends Controller
         ]);
 
         $opp = Opportunity::findOrFail($data['opportunity_id']);
-
-        // Seguridad: solo puede cargar seguimientos de oportunidades asignadas a él (agenda vendedor)
-        if ($opp->assigned_user_id !== $request->user()->id) {
-            abort(403);
-        }
-
-        // Regla de negocio: si la oportunidad está final, no permitir seguimiento
-        if ($opp->status && method_exists($opp->status, 'allowsFollowUp')) {
-            if (!$opp->status->allowsFollowUp()) {
-                return back()->withErrors(['opportunity_id' => 'La oportunidad está cerrada y no admite seguimiento.']);
-            }
-        }
 
         OpportunityFollowup::create([
             'opportunity_id' => $opp->id,

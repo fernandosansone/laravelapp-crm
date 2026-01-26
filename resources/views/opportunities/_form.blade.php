@@ -26,7 +26,7 @@
             </button>
         </div>
 
-        <select x-ref="contactSelect" name="contact_id" class="border rounded w-full px-3 py-2">
+        <select x-ref="contactSelect" name="contact_id" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
             <option value="">Seleccionar...</option>
             @foreach($contacts as $c)
             @php
@@ -49,23 +49,23 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                         <label class="block mb-1">Nombre</label>
-                        <input x-model="form.first_name" class="border rounded w-full px-3 py-2">
+                        <input x-model="form.first_name" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
                     </div>
                     <div>
                         <label class="block mb-1">Apellido</label>
-                        <input x-model="form.last_name" class="border rounded w-full px-3 py-2">
+                        <input x-model="form.last_name" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block mb-1">Razón Social</label>
-                        <input x-model="form.company_name" class="border rounded w-full px-3 py-2">
+                        <input x-model="form.company_name" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
                     </div>
                     <div>
                         <label class="block mb-1">Email</label>
-                        <input x-model="form.email_1" class="border rounded w-full px-3 py-2">
+                        <input x-model="form.email_1" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
                     </div>
                     <div>
                         <label class="block mb-1">Teléfono</label>
-                        <input x-model="form.phone_1" class="border rounded w-full px-3 py-2">
+                        <input x-model="form.phone_1" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
                     </div>
                 </div>
 
@@ -129,20 +129,20 @@
 
     <div class="md:col-span-2">
         <label class="block mb-1">Producto / Detalle</label>
-        <input name="detail" value="{{ old('detail', $opportunity->detail ?? '') }}" class="border rounded w-full px-3 py-2">
+        <input name="detail" value="{{ old('detail', $opportunity->detail ?? '') }}" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
         @error('detail') <div class="text-red-600 text-sm">{{ $message }}</div> @enderror
     </div>
 
     <div>
         <label class="block mb-1">Cantidad</label>
-        <input name="quantity" value="{{ old('quantity', $opportunity->quantity ?? '') }}" class="border rounded w-full px-3 py-2">
+        <input name="quantity" value="{{ old('quantity', $opportunity->quantity ?? '') }}" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
         @error('quantity') <div class="text-red-600 text-sm">{{ $message }}</div> @enderror
     </div>
 
     <div>
         <label class="block mb-1">Medida</label>
         <!--<input name="unit" value="{{ old('unit', $opportunity->unit ?? '') }}" class="border rounded w-full px-3 py-2">-->
-        <select name="unit" class="border rounded w-full px-3 py-2">
+        <select name="unit" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
             <option value="">(sin medida)</option>
             @foreach(\App\Enums\UnitOfMeasure::values() as $u)
                 <option value="{{ $u }}" @selected(old('unit', $opportunity->unit ?? '') === $u)>{{ $u }}</option>
@@ -161,7 +161,7 @@
             @blur="format()"
             type="text"
             inputmode="decimal"
-            class="border rounded w-full px-3 py-2">
+            class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
         <input type="hidden" name="amount" :value="raw">
         @error('amount') <div class="text-red-600 text-sm">{{ $message }}</div> @enderror
     </div>
@@ -199,7 +199,7 @@
     
     <div>
         <label class="block mb-1">Estado</label>
-        <select name="status" class="border rounded w-full px-3 py-2">
+        <select name="status" class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
             @foreach($statuses as $st)
                 <option value="{{ $st }}" @selected(old('status', ($opportunity->status->value ?? $opportunity->status ?? 'prospecto')) === $st)>{{ $st }}</option>
             @endforeach
@@ -212,7 +212,7 @@
         <!--<input type="date" name="opened_at" value="{{ old('opened_at', $opportunity->opened_at ?? '') }}" class="border rounded w-full px-3 py-2">-->
         <input type="date" name="opened_at"
             value="{{ old('opened_at', now()->toDateString()) }}"
-            class="border rounded w-full px-3 py-2">
+            class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
         @error('opened_at') <div class="text-red-600 text-sm">{{ $message }}</div> @enderror
     </div>
 
@@ -220,7 +220,7 @@
     <div>
         <label class="block mb-1">Fecha cierre</label>
         <input type="date" name="closed_at" value="{{ old('closed_at', $opportunity->closed_at ?? '') }}"
-            class="border rounded w-full px-3 py-2">
+            class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
         @error('closed_at') <div class="text-red-600 text-sm">{{ $message }}</div> @enderror
     </div>
     @endif

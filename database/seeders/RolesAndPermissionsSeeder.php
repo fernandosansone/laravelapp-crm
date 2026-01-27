@@ -23,8 +23,10 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         // Extras típicos
-        Permission::firstOrCreate(['name' => 'reports.export']);
+        Permission::firstOrCreate(['name' => 'dashboard.view']);
+        Permission::firstOrCreate(['name' => 'agenda.view']);
         Permission::firstOrCreate(['name' => 'opportunities.change_status']);
+        Permission::firstOrCreate(['name' => 'reports.export']);
 
         // Roles
         $admin = Role::firstOrCreate(['name' => 'Admin']);
@@ -47,6 +49,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 'followups.view','followups.create','followups.update',
                 'quotes.view','quotes.create','quotes.update',
                 'reports.view',
+                'dashboard.view',
+                'agenda.view',
             ])->get()
         );
     }

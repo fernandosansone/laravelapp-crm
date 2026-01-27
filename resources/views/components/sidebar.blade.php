@@ -19,7 +19,10 @@
     })
     ->select('f.opportunity_id', 'f.next_contact_date');
 
-  $overdueCount = DB::table('opportunities as o')
+  $overdueCount = 0;
+  
+  if (auth()->user()?->can('agenda.view')) {
+    $overdueCount = DB::table('opportunities as o')
     ->leftJoinSub($lastFollowupData, 'lfd', function ($join) {
       $join->on('lfd.opportunity_id', '=', 'o.id');
     })
@@ -27,12 +30,12 @@
     ->whereNotNull('lfd.next_contact_date')
     ->whereDate('lfd.next_contact_date', '<', $today)
     ->count();
-
-  // ---- Helper para ítems
-  $navItemClass = function(string $pattern, bool $exactRoute = false, ?string $routeName = null) use ($pattern, $exactRoute, $routeName) {
+  }
+  
+  $navItemClass = function(string $pathPrefix, bool $exactRoute = false, ?string $routeName = null) {
     $active = $routeName
       ? request()->routeIs($routeName)
-      : request()->is($pattern . '*');
+      : request()->is($pathPrefix . '*');
 
     $base = 'flex items-center justify-between gap-3 px-3 py-2 rounded-xl text-sm font-medium transition';
     return $active
@@ -44,13 +47,28 @@
 @endphp
 
 <aside class="h-full w-72 bg-white ring-1 ring-gray-100 flex flex-col">
-  <div class="p-5 border-b border-gray-100">
+  <!--<div class="p-5 border-b border-gray-100">
     <div class="text-lg font-semibold text-gray-900">Mini CRM</div>
     <div class="text-sm text-gray-500 mt-1">Panel comercial</div>
+  </div>-->
+  <div class="p-5 border-b border-gray-100">
+    <div class="flex items-center gap-3">
+      <img src="{{ asset('brand/logo.png') }}"
+          alt="RCg"
+          class="h-10 w-10 rounded-full ring-1 ring-gray-200 bg-white p-1 object-contain">
+      <div>
+        <div class="text-sm text-gray-500 leading-none">RCg</div>
+        <div class="text-base font-semibold text-gray-900 leading-tight">
+          Gestión Comercial <span class="text-gray-500">(CRM)</span>
+        </div>
+        <!--<div class="text-base font-semibold text-gray-900 leading-tight">RCg Gestión Comercial <span class="text-gray-500">(CRM)</span></div>-->
+      </div>
+    </div>
   </div>
 
   <nav class="p-4 space-y-1 flex-1">
     {{-- Dashboard --}}
+    @can('dashboard.view')
     <a href="{{ route('dashboard') }}" class="{{ $navItemClass('dashboard', true, 'dashboard') }}">
       <div class="flex items-center gap-3">
         <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -59,8 +77,10 @@
         <span>Dashboard</span>
       </div>
     </a>
+    @endcan
 
     {{-- Agenda + badge atrasos --}}
+    @can('agenda.view')
     <a href="{{ route('agenda.index') }}" class="{{ $navItemClass('agenda', false) }}">
       <div class="flex items-center gap-3">
         <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -69,7 +89,6 @@
         </svg>
         <span>Agenda</span>
       </div>
-
       @if($overdueCount > 0)
         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 ring-1 ring-red-200">
           {{ $overdueCount }}
@@ -80,8 +99,10 @@
         </span>
       @endif
     </a>
+    @endcan
 
     {{-- Contactos --}}
+    @can('contacts.view')
     <a href="{{ route('contacts.index') }}" class="{{ $navItemClass('contacts', false) }}">
       <div class="flex items-center gap-3">
         <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -90,8 +111,10 @@
         <span>Contactos</span>
       </div>
     </a>
+    @endcan
 
     {{-- Oportunidades --}}
+    @can('opportunities.view')
     <a href="{{ route('opportunities.index') }}" class="{{ $navItemClass('opportunities', false) }}">
       <div class="flex items-center gap-3">
         <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -100,37 +123,50 @@
         <span>Oportunidades</span>
       </div>
     </a>
+    @endcan
 
     {{-- Reporte --}}
     @can('reports.view')
-      <a href="{{ route('reports.commercial') }}" class="{{ $navItemClass('reports/commercial', false) }}">
-        <div class="flex items-center gap-3">
-          <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5a2 2 0 012-2h12a2 2 0 012 2v14" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 17V9m4 8V7m4 10v-5" />
-          </svg>
-          <span>Reporte comercial</span>
-        </div>
-      </a>
+    <a href="{{ route('reports.commercial') }}" class="{{ $navItemClass('reports/commercial', false) }}">
+      <div class="flex items-center gap-3">
+        <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5a2 2 0 012-2h12a2 2 0 012 2v14" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 17V9m4 8V7m4 10v-5" />
+        </svg>
+        <span>Reporte comercial</span>
+      </div>
+    </a>
     @endcan
 
     @can('users.view')
-      <a href="{{ route('users.index') }}" class="{{ $navItemClass('users', false) }}">
-        <div class="flex items-center gap-3">
-          <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7a4 4 0 110 8 4 4 0 010-8z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M20 8v6m3-3h-6" />
-          </svg>
-          <span>Usuarios</span>
-        </div>
-      </a>
+    <a href="{{ route('users.index') }}" class="{{ $navItemClass('users', false) }}">
+      <div class="flex items-center gap-3">
+        <svg class="{{ $iconClass }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7a4 4 0 110 8 4 4 0 010-8z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 8v6m3-3h-6" />
+        </svg>
+        <span>Usuarios</span>
+      </div>
+    </a>
     @endcan
+
   </nav>
 
   <div class="p-4 border-t border-gray-100">
     <div class="text-xs text-gray-500">Usuario</div>
-    <div class="text-sm font-medium text-gray-900">{{ auth()->user()->name ?? '' }}</div>
+
+    <div class="flex items-center gap-2 mt-0.5">
+      <div class="text-sm font-medium text-gray-900">
+        {{ auth()->user()->name ?? '' }}
+      </div>
+
+      @if(auth()->user()?->can('users.view'))
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-900 text-white">
+          Administrador
+        </span>
+      @endif
+    </div>
 
     <form method="POST" action="{{ route('logout') }}" class="mt-3">
       @csrf

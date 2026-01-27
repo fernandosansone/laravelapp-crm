@@ -1,52 +1,50 @@
 <x-guest-layout>
-  <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Recuperar contraseña</h1>
-      <p class="text-sm text-gray-500 mt-1">
-        Ingresá tu email y te enviaremos un enlace para restablecerla.
-      </p>
+  <div class="text-center mb-6">
+    <img src="{{ asset('brand/logo.png') }}"
+        alt="RCg Gestión Comercial"
+        class="mx-auto h-16 w-16 sm:h-20 sm:w-20 object-contain rounded-full ring-1 ring-gray-200 bg-white p-1">
+
+    <div class="mt-3 text-lg font-semibold text-gray-900">
+      RCg Gestión Comercial <span class="text-gray-500">(CRM)</span>
+    </div>
+  </div>
+
+  <div class="bg-white border border-gray-300 rounded-sm p-6">
+    <div class="text-gray-700 mb-4">
+      Ingresá tu email y te enviaremos un enlace para restablecer tu contraseña.
     </div>
 
-    {{-- Session Status --}}
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    {{-- Error general (primer error) --}}
     @if ($errors->any())
-      <div class="p-3 border rounded-xl bg-red-50 border-red-100 text-red-800 text-sm">
+      <div class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3">
         {{ $errors->first() }}
       </div>
     @endif
 
-    <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+    <form method="POST" action="{{ route('password.email') }}">
       @csrf
 
-      <div>
-        <label class="block text-sm text-gray-600 mb-1" for="email">Email</label>
+      <div class="mb-4">
+        <label class="block text-base font-medium text-gray-800 mb-2" for="email">Correo electrónico</label>
         <input id="email"
                name="email"
                type="email"
                value="{{ old('email') }}"
                required
                autofocus
-               autocomplete="username"
-               placeholder="tu@email.com"
-               class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
+               class="w-full border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
         @error('email')
-          <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
         @enderror
       </div>
 
-      <div class="pt-2">
-        <button type="submit"
-                class="w-full inline-flex justify-center items-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900/30">
-          Enviar enlace de recuperación
-        </button>
-      </div>
+      <button type="submit" class="w-full bg-blue-700 text-white font-semibold px-5 py-2 hover:bg-blue-800">
+        Enviar enlace
+      </button>
 
-      <div class="text-sm text-gray-600">
-        <a href="{{ route('login') }}" class="font-medium text-gray-900 underline underline-offset-4 hover:text-gray-700">
-          Volver al login
-        </a>
+      <div class="text-center mt-4 text-gray-700">
+        <a href="{{ route('login') }}" class="hover:underline">Volver al login</a>
       </div>
     </form>
   </div>

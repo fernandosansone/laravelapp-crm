@@ -1,26 +1,29 @@
 <x-guest-layout>
-  <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl font-semibold tracking-tight text-gray-900">Iniciar sesión</h1>
-      <p class="text-sm text-gray-500 mt-1">Ingresá con tu usuario y contraseña.</p>
+  <div class="text-center mb-6">
+    <img src="{{ asset('brand/logo.png') }}"
+        alt="RCg Gestión Comercial"
+        class="mx-auto h-16 w-16 sm:h-20 sm:w-20 object-contain rounded-full ring-1 ring-gray-200 bg-white p-1">
+
+    <div class="mt-3 text-lg font-semibold text-gray-900">
+      RCg Gestión Comercial <span class="text-gray-500">(CRM)</span>
     </div>
+  </div>
 
-    {{-- Session Status --}}
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    {{-- Error general (primer error) --}}
+  <div class="bg-white border border-gray-300 rounded-sm p-6">
     @if ($errors->any())
-      <div class="p-3 border rounded-xl bg-red-50 border-red-100 text-red-800 text-sm">
+      <div class="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3">
         {{ $errors->first() }}
       </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+    <form method="POST" action="{{ route('login') }}" x-data="{ show:false }">
       @csrf
 
-      {{-- Email --}}
-      <div>
-        <label class="block text-sm text-gray-600 mb-1" for="email">Email</label>
+      <div class="mb-4">
+        <label class="block text-base font-medium text-gray-800 mb-2" for="email">
+          Nombre de usuario
+        </label>
+
         <input id="email"
                name="email"
                type="email"
@@ -28,55 +31,61 @@
                required
                autofocus
                autocomplete="username"
-               placeholder="tu@email.com"
-               class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
+               class="w-full border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
         @error('email')
-          <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
+          <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
         @enderror
       </div>
 
-      {{-- Password --}}
-      <div>
-        <label class="block text-sm text-gray-600 mb-1" for="password">Contraseña</label>
-        <input id="password"
-               name="password"
-               type="password"
-               required
-               autocomplete="current-password"
-               placeholder="••••••••"
-               class="w-full bg-white rounded-xl px-3 py-2 ring-1 ring-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
-        @error('password')
-          <div class="text-sm text-red-600 mt-1">{{ $message }}</div>
-        @enderror
-      </div>
-
-      <div class="flex items-center justify-between">
-        {{-- Remember --}}
-        <label class="inline-flex items-center gap-2 text-sm text-gray-700 select-none">
-          <input type="checkbox"
-                 name="remember"
-                 class="rounded border-gray-300 text-gray-900 shadow-sm focus:ring-gray-900/20">
-          <span>Recordarme</span>
+      <div class="mb-4">
+        <label class="block text-base font-medium text-gray-800 mb-2" for="password">
+          Contraseña
         </label>
 
-        @if (Route::has('password.request'))
-          <a class="text-sm font-medium text-gray-900 underline underline-offset-4 hover:text-gray-700"
-             href="{{ route('password.request') }}">
-            Olvidé mi contraseña
-          </a>
-        @endif
+        <div class="relative">
+          <input id="password"
+                 name="password"
+                 :type="show ? 'text' : 'password'"
+                 required
+                 autocomplete="current-password"
+                 class="w-full border border-gray-300 px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500">
+
+          <button type="button"
+                  class="absolute inset-y-0 right-0 px-3 text-gray-600 hover:text-gray-900"
+                  @click="show = !show"
+                  aria-label="Mostrar/ocultar contraseña">
+            {{-- iconito ojo --}}
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+
+        @error('password')
+          <div class="mt-1 text-sm text-red-600">{{ $message }}</div>
+        @enderror
       </div>
 
-      <div class="pt-2">
+      <div class="flex items-center justify-between mb-5">
+        <label class="inline-flex items-center gap-2 text-gray-800">
+          <input type="checkbox" name="remember" class="h-4 w-4 border-gray-300">
+          <span>Recuérdame</span>
+        </label>
+
         <button type="submit"
-                class="w-full inline-flex justify-center items-center rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900/30">
-          Entrar
+                class="bg-blue-700 text-white font-semibold px-5 py-2 hover:bg-blue-800">
+          Ingresar
         </button>
       </div>
 
-      <div class="text-xs text-gray-500">
-        Al ingresar aceptás las políticas internas de uso del sistema.
-      </div>
+      @if (Route::has('password.request'))
+        <div class="text-center text-gray-700">
+          <a href="{{ route('password.request') }}" class="hover:underline">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+      @endif
     </form>
   </div>
 </x-guest-layout>

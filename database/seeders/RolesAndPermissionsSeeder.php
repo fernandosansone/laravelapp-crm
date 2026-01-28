@@ -45,7 +45,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Supervisor: todo menos borrar usuarios (ejemplo)
         $supervisor->syncPermissions(
-            Permission::whereNotIn('name', ['users.delete'])->get()
+            Permission::whereNotIn('name', ['users.delete', 'roles.delete', 'permissions.delete'])->get()
         );
 
         // Ejecutivo: CRM básico (ajustable)
@@ -58,6 +58,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'reports.view',
                 'dashboard.view',
                 'agenda.view', 'agenda.followups.create',
+                'users.view', 
             ])->get()
         );
     }

@@ -36,8 +36,9 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         $roles = Role::orderBy('name')->get();
+        $defaultRole = config('rcgcrm.default_role', 'Ejecutivo');
 
-        return view('users.create', compact('roles'));
+        return view('users.create', compact('roles', 'defaultRole'));
     }
 
     public function store(Request $request)
@@ -48,7 +49,7 @@ class UserController extends Controller
             'name' => ['required','string','max:255'],
             'email' => ['required','email','max:255','unique:users,email'],
             'password' => ['required','string','min:8','confirmed'],
-            'roles' => ['nullable','array'],
+            'roles' => ['required','array','min:1'],
             'roles.*' => ['string','exists:roles,name'],
         ]);
 
@@ -82,7 +83,7 @@ class UserController extends Controller
             'name' => ['required','string','max:255'],
             'email' => ['required','email','max:255','unique:users,email,' . $user->id],
             'password' => ['nullable','string','min:8','confirmed'],
-            'roles' => ['nullable','array'],
+            'roles' => [$request->user()->can('roles.update') ? 'required' : 'sometimes', 'array', 'min:1'],
             'roles.*' => ['string','exists:roles,name'],
         ]);
 

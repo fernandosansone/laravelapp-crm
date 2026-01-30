@@ -16,7 +16,7 @@
       <x-card title="Datos del usuario" subtitle="Nombre, email, contraseña y roles.">
         <form method="POST" action="{{ route('users.store') }}">
           @csrf
-          @include('users._form', ['roles' => $roles])
+          @include('users._form', ['roles' => $roles, 'defaultRole' => $defaultRole])
         </form>
       </x-card>
 

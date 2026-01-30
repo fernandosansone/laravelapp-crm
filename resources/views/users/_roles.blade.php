@@ -1,5 +1,12 @@
 @php
-  $selected = old('roles', isset($user) ? ($user->roles?->pluck('name')->toArray() ?? []) : []);
+  $isEdit = isset($user);
+
+  $suggested = $defaultRole ?? 'Ejecutivo';
+
+  $selected = old('roles', $isEdit
+    ? ($user->roles?->pluck('name')->toArray() ?? [])
+    : [$suggested]
+  );
 @endphp
 
 <div class="mt-4">

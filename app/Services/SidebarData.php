@@ -78,7 +78,15 @@ class SidebarData
         }
 
         if ($user->can('reports.view')) {
-            $crm[] = $this->item('reports', 'Reportes', 'reports.commercial', 'chart', null, null, 'reports/commercial');
+            $crm[] = $this->item(
+                'reports',
+                'Reportes',
+                'reports.commercial',
+                'chart',
+                null,
+                null,
+                'reports/commercial'
+            );
         }
 
         // --- Administración
@@ -94,21 +102,19 @@ class SidebarData
             $admin[] = $this->item('permissions', 'Permisos', 'permissions.index', 'clock');
         }
 
-        // Estructura por secciones
+        // Limpieza defensiva: quita items sin route/label
+        $crm = array_values(array_filter($crm, fn($i) => !empty($i['route']) && !empty($i['label'])));
+        $admin = array_values(array_filter($admin, fn($i) => !empty($i['route']) && !empty($i['label'])));
+
         $sections = [];
 
-        if (count($crm) > 0) {
-            $sections[] = [
-                'title' => 'CRM',
-                'items' => $crm,
-            ];
+        if (!empty($crm)) {
+            $sections[] = ['title' => 'CRM', 'items' => $crm];
         }
 
-        if (count($admin) > 0) {
-            $sections[] = [
-                'title' => 'Administración',
-                'items' => $admin,
-            ];
+        // “Administración” desaparece si no hay permisos
+        if (!empty($admin)) {
+            $sections[] = ['title' => 'Administración', 'items' => $admin];
         }
 
         return $sections;

@@ -10,12 +10,12 @@
       : $base . ' text-gray-700 hover:bg-gray-100';
   };
 
-  $badgeClass = function(?string $variant) {
-    return match($variant) {
-      'red' => 'bg-red-50 text-red-700 ring-1 ring-red-200',
-      'green' => 'bg-green-50 text-green-700 ring-1 ring-green-200',
-      default => 'bg-gray-50 text-gray-700 ring-1 ring-gray-200',
-    };
+  $badgeClass = function (?string $variant = null) {
+    $variants = config('rcgcrm.badge_variants', []);
+
+    return $variants[$variant]
+      ?? $variants['default']
+      ?? 'bg-gray-50 text-gray-700 ring-1 ring-gray-200';
   };
 @endphp
 
@@ -36,43 +36,66 @@
   </div>
 
   {{-- Menu (secciones) --}}
-  <nav class="p-4 space-y-5 flex-1 overflow-y-auto pb-28">
-    @foreach(($menu ?? []) as $section)
-      <div class="space-y-1">
-        <div class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-          {{ $section['title'] ?? '' }}
-        </div>
+  <nav class="p-4 flex-1 overflow-y-auto pb-28">
+    @php
+      $sections = collect($menu ?? [])->values();
+      $lastIndex = max(0, $sections->count() - 1);
+    @endphp
 
-        <div class="space-y-1 mt-2">
-          @foreach(($section['items'] ?? []) as $item)
-            @php
-              $prefix = $item['activePathPrefix'] ?? ($item['key'] ?? '');
-              $routeName = $item['route'] ?? null;
+    <div class="space-y-5">
+      @foreach($sections as $i => $section)
+        <div class="space-y-2">
 
-              $badge = $item['badge'] ?? null;
-              $badgeVariant = $item['badgeVariant'] ?? null;
+          {{-- Título de sección (más claro, menos “peso” que los ítems) --}}
+          <div class="px-3">
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              {{ $section['title'] ?? '' }}
+            </div>
+          </div>
 
-              $activeClass = $navItemClass($prefix, $routeName);
-            @endphp
+          {{-- Items --}}
+          <div class="space-y-1">
+            @foreach(($section['items'] ?? []) as $item)
+              @php
+                $prefix = $item['activePathPrefix'] ?? ($item['key'] ?? '');
+                $routeName = $item['route'] ?? null;
 
-            <a href="{{ route($routeName) }}" class="{{ $activeClass }}">
-              <div class="flex items-center gap-3 min-w-0">
-                <x-nav-icon :name="$item['icon'] ?? ''" />
-                <span class="truncate">{{ $item['label'] ?? '' }}</span>
-              </div>
+                $badge = $item['badge'] ?? null;
+                $badgeVariant = $item['badgeVariant'] ?? null;
 
-              @if(!is_null($badge))
-                @php $bd = is_numeric($badge) ? (int)$badge : $badge; @endphp
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgeClass($badgeVariant) }}">
-                  {{ $bd }}
-                </span>
+                $activeClass = $navItemClass($prefix, $routeName);
+              @endphp
+
+              @if($routeName)
+                <a href="{{ route($routeName) }}" class="{{ $activeClass }}">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <x-nav-icon :name="$item['icon'] ?? ''" />
+                    <span class="truncate">{{ $item['label'] ?? '' }}</span>
+                  </div>
+
+                  @if(!is_null($badge))
+                    @php $bd = is_numeric($badge) ? (int)$badge : $badge; @endphp
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {{ $badgeClass($badgeVariant) }}">
+                      {{ $bd }}
+                    </span>
+                  @endif
+                </a>
               @endif
-            </a>
-          @endforeach
+            @endforeach
+          </div>
+
+          {{-- Separador entre secciones (no después de la última) --}}
+          @if($i < $lastIndex)
+            <div class="pt-2">
+              <div class="mx-3 border-t border-gray-100"></div>
+            </div>
+          @endif
+
         </div>
-      </div>
-    @endforeach
+      @endforeach
+    </div>
   </nav>
+
 
   {{-- Sticky: Usuario + Logout siempre visible --}}
   <div class="sticky bottom-0 bg-white border-t border-gray-100 p-4">

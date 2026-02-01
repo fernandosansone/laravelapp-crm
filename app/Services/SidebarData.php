@@ -50,16 +50,16 @@ class SidebarData
      */
     protected function menuFor(User $user, int $overdueCount): array
     {
-        $items = [];
+        $crm = [];
+        $admin = [];
 
-        // Dashboard
+        // --- CRM
         if ($user->can('dashboard.view')) {
-            $items[] = $this->item('dashboard', 'Dashboard', 'dashboard', 'dashboard');
+            $crm[] = $this->item('dashboard', 'Dashboard', 'dashboard', 'dashboard');
         }
 
-        // Agenda (con badge atrasos)
         if ($user->can('agenda.view')) {
-            $items[] = $this->item(
+            $crm[] = $this->item(
                 'agenda',
                 'Agenda',
                 'agenda.index',
@@ -69,34 +69,51 @@ class SidebarData
             );
         }
 
-        // Contactos
         if ($user->can('contacts.view')) {
-            $items[] = $this->item('contacts', 'Contactos', 'contacts.index', 'users');
+            $crm[] = $this->item('contacts', 'Contactos', 'contacts.index', 'users');
         }
 
-        // Oportunidades
         if ($user->can('opportunities.view')) {
-            $items[] = $this->item('opportunities', 'Oportunidades', 'opportunities.index', 'doc');
+            $crm[] = $this->item('opportunities', 'Oportunidades', 'opportunities.index', 'doc');
         }
 
-        // Reporte comercial
         if ($user->can('reports.view')) {
-            $items[] = $this->item('reports', 'Reporte comercial', 'reports.commercial', 'chart', null, null, 'reports/commercial');
+            $crm[] = $this->item('reports', 'Reportes', 'reports.commercial', 'chart', null, null, 'reports/commercial');
         }
 
-        // Admin area (Users/Roles/Permisos)
+        // --- Administración
         if ($user->can('users.view')) {
-            $items[] = $this->item('users', 'Usuarios', 'users.index', 'user');
-        }
-        if ($user->can('roles.view')) {
-            $items[] = $this->item('roles', 'Roles', 'roles.index', 'layers');
-        }
-        if ($user->can('permissions.view')) {
-            $items[] = $this->item('permissions', 'Permisos', 'permissions.index', 'clock');
+            $admin[] = $this->item('users', 'Usuarios', 'users.index', 'user');
         }
 
-        return $items;
+        if ($user->can('roles.view')) {
+            $admin[] = $this->item('roles', 'Roles', 'roles.index', 'layers');
+        }
+
+        if ($user->can('permissions.view')) {
+            $admin[] = $this->item('permissions', 'Permisos', 'permissions.index', 'clock');
+        }
+
+        // Estructura por secciones
+        $sections = [];
+
+        if (count($crm) > 0) {
+            $sections[] = [
+                'title' => 'CRM',
+                'items' => $crm,
+            ];
+        }
+
+        if (count($admin) > 0) {
+            $sections[] = [
+                'title' => 'Administración',
+                'items' => $admin,
+            ];
+        }
+
+        return $sections;
     }
+
 
     protected function item(
         string $key,

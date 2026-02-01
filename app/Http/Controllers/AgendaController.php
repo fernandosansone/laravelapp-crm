@@ -71,6 +71,8 @@ class AgendaController extends Controller
             'created_by' => $request->user()->id,
         ]);
         
+        app(\App\Services\SidebarData::class)->forgetOverdueCacheFor($request->user());
+
         return back()->with('success', 'Seguimiento registrado.');
     }
 }
